@@ -89,6 +89,9 @@ class ContextRetriever:
         *,
         invalidated_fact_ids: frozenset[str] = frozenset(),
     ) -> ContextPacket:
+        invalidated_fact_ids = (
+            invalidated_fact_ids | self.repository.invalidated_fact_ids(query.question_time)
+        )
         facts = self.repository.list_facts()
         relationships = self.repository.list_relationships()
         structural = tuple(fact for fact in facts if self._matches_structure(fact, query))

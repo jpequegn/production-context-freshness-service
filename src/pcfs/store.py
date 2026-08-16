@@ -10,7 +10,13 @@ from pydantic import BaseModel, ConfigDict
 
 from pcfs.identifiers import canonical_json, stable_id
 from pcfs.ingestion import SourceBundle
-from pcfs.models import Fact, FactRelationship, FreshnessPolicy, SourceVersion
+from pcfs.models import (
+    Fact,
+    FactRelationship,
+    FreshnessPolicy,
+    InvalidationRecord,
+    SourceVersion,
+)
 
 
 class IngestionResult(BaseModel):
@@ -88,6 +94,16 @@ class Repository:
                 affected_id VARCHAR NOT NULL,
                 recorded_at TIMESTAMPTZ NOT NULL,
                 details_json VARCHAR NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS invalidations (
+                invalidation_id VARCHAR PRIMARY KEY,
+                trigger VARCHAR NOT NULL,
+                target_fact_id VARCHAR NOT NULL,
+                source_fact_id VARCHAR,
+                service VARCHAR NOT NULL,
+                occurred_at TIMESTAMPTZ NOT NULL,
+                reason VARCHAR NOT NULL,
+                payload_json VARCHAR NOT NULL
             );
             """
         )
@@ -234,6 +250,44 @@ class Repository:
         ).fetchall()
         return tuple(FreshnessPolicy.model_validate_json(row[0]) for row in rows)
 
+    def record_invalidations(self, records: tuple[InvalidationRecord, ...]) -> int:
+        self.initialize()
+        inserted = 0
+        self.connection.execute("BEGIN TRANSACTION")
+        try:
+            for record in records:
+                before = self.connection.execute(
+                    "SELECT count(*) FROM invalidations WHERE invalidation_id = ?",
+                    [record.invalidation_id],
+                ).fetchone()[0]
+                self.connection.execute(
+                    "INSERT OR IGNORE INTO invalidations VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    [
+                        record.invalidation_id,
+                        record.trigger,
+                        record.target_fact_id,
+                        record.source_fact_id,
+                        record.service,
+                        record.occurred_at,
+                        record.reason,
+                        record.model_dump_json(),
+                    ],
+                )
+                inserted += int(before == 0)
+            self.connection.execute("COMMIT")
+        except Exception:
+            self.connection.execute("ROLLBACK")
+            raise
+        return inserted
+
+    def invalidated_fact_ids(self, at_time: datetime) -> frozenset[str]:
+        self.initialize()
+        rows = self.connection.execute(
+            "SELECT target_fact_id FROM invalidations WHERE occurred_at <= ?",
+            [at_time],
+        ).fetchall()
+        return frozenset(row[0] for row in rows)
+
     def count(self, table: str) -> int:
         allowed = {
             "source_versions",
@@ -241,6 +295,7 @@ class Repository:
             "relationships",
             "freshness_policies",
             "ingestion_events",
+            "invalidations",
         }
         if table not in allowed:
             raise ValueError(f"unsupported table: {table}")

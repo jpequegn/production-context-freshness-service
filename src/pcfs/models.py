@@ -249,4 +249,19 @@ class AccessContext(StrictModel):
     environment: str | None = None
 
 
+class InvalidationRecord(StrictModel):
+    invalidation_id: str
+    trigger: str
+    target_fact_id: str
+    source_fact_id: str | None = None
+    service: str
+    occurred_at: datetime
+    reason: str
+
+    @model_validator(mode="after")
+    def validate_time(self) -> InvalidationRecord:
+        _require_aware(self.occurred_at, "occurred_at")
+        return self
+
+
 EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
