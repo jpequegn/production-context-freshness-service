@@ -173,6 +173,26 @@ def expand_dependents(
     return frozenset(visited), frozenset(traversed)
 
 
+def render_impact_markdown(report: ImpactReport) -> str:
+    lines = [
+        "# Operational Change Impact",
+        "",
+        f"- Trigger: `{report.trigger}`",
+        f"- Service: `{report.service}`",
+        f"- Occurred at: `{report.occurred_at.isoformat()}`",
+        f"- Mode: `{'apply' if report.applied else 'dry-run'}`",
+        f"- Affected facts: {len(report.affected_fact_ids)}",
+        f"- Affected eval cases: {len(report.affected_question_ids)}",
+        "",
+        "## Context query keys",
+        "",
+    ]
+    lines.extend(f"- `{key}`" for key in report.affected_query_keys)
+    lines.extend(["", "## Evaluation cases", ""])
+    lines.extend(f"- `{question_id}`" for question_id in report.affected_question_ids)
+    return "\n".join(lines) + "\n"
+
+
 def _question_affected(kind: str, trigger: str) -> bool:
     mapping = {
         "metric_renamed": {"metric_at_open", "mitigation_after_close"},

@@ -67,6 +67,7 @@ class EvalQuestion(StrictModel):
     question_time: datetime
     expected_state: ContextState
     expected_answer_ids: tuple[str, ...] = ()
+    access_scopes: frozenset[str] = frozenset()
 
 
 class Corpus(StrictModel):
@@ -94,17 +95,24 @@ class Corpus(StrictModel):
             ]
             owner = service.owner
             metric = service.metric
+            owner_observed_at = datetime(2026, 1, 1, tzinfo=incident.opened_at.tzinfo)
+            metric_observed_at = owner_observed_at
             for change in prior_changes:
                 if change.type == "ownership_change":
                     owner = change.new_value
+                    owner_observed_at = change.occurred_at
                 elif change.type == "metric_rename":
                     metric = change.new_value
+                    metric_observed_at = change.occurred_at
 
-            owner_state = (
-                ContextState.DISPUTED
-                if any(change.type == "authority_conflict" for change in prior_changes)
-                else ContextState.CURRENT
-            )
+            if service.sensitivity is Sensitivity.RESTRICTED:
+                owner_state = ContextState.INSUFFICIENT_EVIDENCE
+            elif any(change.type == "authority_conflict" for change in prior_changes):
+                owner_state = ContextState.DISPUTED
+            elif incident.opened_at - owner_observed_at >= timedelta(days=30):
+                owner_state = ContextState.STALE
+            else:
+                owner_state = ContextState.CURRENT
             questions.append(
                 _question(
                     index,
@@ -112,12 +120,20 @@ class Corpus(StrictModel):
                     templates["owner_at_open"],
                     incident.opened_at,
                     owner_state,
-                    () if owner_state is ContextState.DISPUTED else (f"owner:{owner}",),
+                    (f"owner:{owner}",) if owner_state is ContextState.CURRENT else (),
                 )
             )
 
-            renamed = any(change.type == "metric_rename" for change in prior_changes)
-            metric_state = ContextState.CURRENT if renamed or index % 3 else ContextState.STALE
+            metric_state = (
+                ContextState.STALE
+                if incident.opened_at - metric_observed_at >= timedelta(days=30)
+                else ContextState.CURRENT
+            )
+            restricted_scope = (
+                frozenset({f"service:{service.id}:restricted"})
+                if service.sensitivity is Sensitivity.RESTRICTED
+                else frozenset()
+            )
             questions.append(
                 _question(
                     index,
@@ -126,6 +142,7 @@ class Corpus(StrictModel):
                     incident.opened_at,
                     metric_state,
                     (f"metric:{metric}",) if metric_state is ContextState.CURRENT else (),
+                    restricted_scope,
                 )
             )
 
@@ -137,10 +154,8 @@ class Corpus(StrictModel):
                     incident.closed_at + timedelta(minutes=1),
                     ContextState.STALE,
                     (),
+                    restricted_scope,
                 )
-            )
-            missing_state = (
-                ContextState.UNKNOWN if index % 2 else ContextState.INSUFFICIENT_EVIDENCE
             )
             questions.append(
                 _question(
@@ -148,7 +163,7 @@ class Corpus(StrictModel):
                     incident,
                     templates["undocumented_objective"],
                     incident.opened_at,
-                    missing_state,
+                    ContextState.UNKNOWN,
                     (),
                 )
             )
@@ -162,6 +177,7 @@ def _question(
     question_time: datetime,
     state: ContextState,
     answers: tuple[str, ...],
+    access_scopes: frozenset[str] = frozenset(),
 ) -> EvalQuestion:
     return EvalQuestion(
         id=f"q-{index:02d}-{template.kind}",
@@ -172,6 +188,7 @@ def _question(
         question_time=question_time,
         expected_state=state,
         expected_answer_ids=answers,
+        access_scopes=access_scopes,
     )
 
 
