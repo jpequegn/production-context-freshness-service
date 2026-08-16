@@ -227,6 +227,13 @@ class Repository:
         ).fetchall()
         return tuple(FactRelationship.model_validate_json(row[0]) for row in rows)
 
+    def list_policies(self) -> tuple[FreshnessPolicy, ...]:
+        self.initialize()
+        rows = self.connection.execute(
+            "SELECT payload_json FROM freshness_policies ORDER BY policy_id, version"
+        ).fetchall()
+        return tuple(FreshnessPolicy.model_validate_json(row[0]) for row in rows)
+
     def count(self, table: str) -> int:
         allowed = {
             "source_versions",
