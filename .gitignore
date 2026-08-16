@@ -1,0 +1,11 @@
+.DS_Store
+.coverage
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+*.duckdb
+*.pyc
+build/
+dist/
+reports/
