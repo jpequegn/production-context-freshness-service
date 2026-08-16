@@ -17,10 +17,10 @@ prerequisites for proving correctness.
 ## Development
 
 ```bash
-uv sync
-uv run pcfs version
-uv run ruff check .
-uv run pytest
+uv sync --no-editable
+uv run --no-sync pcfs version
+uv run --no-sync ruff check .
+uv run --no-sync pytest
 ```
 
 ## Status
