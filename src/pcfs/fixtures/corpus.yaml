@@ -1,0 +1,104 @@
+fictional: true
+corpus_version: "2026-08-16.1"
+description: "Fictional Acme-free environment for temporal context evaluation."
+services:
+  - id: checkout
+    owner: team-orchid
+    dependencies: [currency, inventory, identity]
+    slo: "99.90% successful checkouts"
+    metric: checkout_requests_total
+    procedure: "Verify currency latency, inventory reservations, then payment status."
+    flag: checkout_v2
+    sensitivity: internal
+  - id: currency
+    owner: team-juniper
+    dependencies: []
+    slo: "99.95% conversion responses under 120ms"
+    metric: currency_quote_seconds
+    procedure: "Compare provider freshness and reject rates before failover."
+    flag: provider_aurora
+    sensitivity: internal
+  - id: stream-router
+    owner: team-quartz
+    dependencies: [ledger, analytics]
+    slo: "99.90% events delivered within 60s"
+    metric: stream_consumer_lag
+    procedure: "Inspect partition lag, rebalance count, and dead-letter volume."
+    flag: adaptive_partitions
+    sensitivity: internal
+  - id: inventory
+    owner: team-lumen
+    dependencies: [stream-router]
+    slo: "99.95% reservation responses under 200ms"
+    metric: inventory_reservation_seconds
+    procedure: "Check reservation saturation and stream freshness."
+    flag: reservation_shadow_write
+    sensitivity: internal
+  - id: identity
+    owner: team-cedar
+    dependencies: [notifications]
+    slo: "99.99% authentication availability"
+    metric: identity_auth_failures_total
+    procedure: "Check issuer keys, session store, and challenge delivery."
+    flag: passkey_rollout
+    sensitivity: restricted
+  - id: notifications
+    owner: team-nimbus
+    dependencies: []
+    slo: "99.90% messages accepted within 30s"
+    metric: notification_delivery_seconds
+    procedure: "Inspect provider rejects and template rendering failures."
+    flag: provider_borealis
+    sensitivity: internal
+  - id: ledger
+    owner: team-saffron
+    dependencies: [identity]
+    slo: "100% balanced journal batches"
+    metric: ledger_unbalanced_batches_total
+    procedure: "Pause batch promotion and compare debit-credit totals."
+    flag: journal_v3
+    sensitivity: restricted
+  - id: analytics
+    owner: team-harbor
+    dependencies: [stream-router]
+    slo: "99.0% daily aggregates complete by 07:00 UTC"
+    metric: analytics_partition_freshness_seconds
+    procedure: "Check partition arrivals, schema compatibility, and backfill state."
+    flag: incremental_backfill
+    sensitivity: internal
+releases:
+  - {id: rel-001, service: checkout, deployed_at: "2026-01-03T12:00:00Z"}
+  - {id: rel-002, service: currency, deployed_at: "2026-01-08T15:00:00Z"}
+  - {id: rel-003, service: stream-router, deployed_at: "2026-01-15T09:00:00Z"}
+  - {id: rel-004, service: inventory, deployed_at: "2026-01-25T16:30:00Z"}
+  - {id: rel-005, service: identity, deployed_at: "2026-02-04T18:00:00Z"}
+  - {id: rel-006, service: notifications, deployed_at: "2026-02-14T11:00:00Z"}
+  - {id: rel-007, service: ledger, deployed_at: "2026-02-24T08:00:00Z"}
+  - {id: rel-008, service: analytics, deployed_at: "2026-03-04T13:00:00Z"}
+incidents:
+  - {id: inc-001, service: checkout, opened_at: "2026-01-04T10:00:00Z", closed_at: "2026-01-04T13:00:00Z", observation: "Elevated checkout failures", mitigation: "Disable checkout_v2"}
+  - {id: inc-002, service: currency, opened_at: "2026-01-09T08:00:00Z", closed_at: "2026-01-09T09:30:00Z", observation: "Provider quote latency", mitigation: "Route to cached rates"}
+  - {id: inc-003, service: stream-router, opened_at: "2026-01-16T06:00:00Z", closed_at: "2026-01-16T12:00:00Z", observation: "Consumer lag growth", mitigation: "Pin partition count"}
+  - {id: inc-004, service: inventory, opened_at: "2026-01-27T14:00:00Z", closed_at: "2026-01-27T17:00:00Z", observation: "Reservation saturation", mitigation: "Reduce reservation TTL"}
+  - {id: inc-005, service: checkout, opened_at: "2026-02-02T09:00:00Z", closed_at: "2026-02-02T11:00:00Z", observation: "Ownership escalation conflict", mitigation: "Use incident commander route"}
+  - {id: inc-006, service: identity, opened_at: "2026-02-05T07:00:00Z", closed_at: "2026-02-05T10:00:00Z", observation: "Challenge delivery failures", mitigation: "Disable passkey_rollout"}
+  - {id: inc-007, service: notifications, opened_at: "2026-02-15T03:00:00Z", closed_at: "2026-02-15T05:00:00Z", observation: "Provider rejects", mitigation: "Fail over to secondary provider"}
+  - {id: inc-008, service: ledger, opened_at: "2026-02-25T01:00:00Z", closed_at: "2026-02-25T04:00:00Z", observation: "Unbalanced batch", mitigation: "Pause journal_v3"}
+  - {id: inc-009, service: analytics, opened_at: "2026-03-05T08:00:00Z", closed_at: "2026-03-05T14:00:00Z", observation: "Late aggregate partitions", mitigation: "Run bounded backfill"}
+  - {id: inc-010, service: currency, opened_at: "2026-03-08T12:00:00Z", closed_at: "2026-03-08T13:00:00Z", observation: "Stale rate timestamp", mitigation: "Reject old provider snapshots"}
+  - {id: inc-011, service: stream-router, opened_at: "2026-03-10T17:00:00Z", closed_at: "2026-03-10T22:00:00Z", observation: "Dead-letter spike", mitigation: "Quarantine incompatible events"}
+  - {id: inc-012, service: inventory, opened_at: "2026-03-12T05:00:00Z", closed_at: "2026-03-12T07:00:00Z", observation: "Shadow write mismatch", mitigation: "Disable reservation_shadow_write"}
+  - {id: inc-013, service: identity, opened_at: "2026-03-14T21:00:00Z", closed_at: "2026-03-15T00:00:00Z", observation: "Issuer key propagation delay", mitigation: "Extend previous-key grace period"}
+  - {id: inc-014, service: notifications, opened_at: "2026-03-16T11:00:00Z", closed_at: "2026-03-16T15:00:00Z", observation: "Template rendering errors", mitigation: "Roll back template bundle"}
+  - {id: inc-015, service: analytics, opened_at: "2026-03-18T04:00:00Z", closed_at: "2026-03-18T09:00:00Z", observation: "Schema compatibility failure", mitigation: "Pin prior schema version"}
+changes:
+  - {id: chg-owner-1, type: ownership_change, service: checkout, occurred_at: "2026-02-01T00:00:00Z", old_value: team-orchid, new_value: team-lumen}
+  - {id: chg-owner-2, type: ownership_change, service: analytics, occurred_at: "2026-03-01T00:00:00Z", old_value: team-harbor, new_value: team-quartz}
+  - {id: chg-metric-1, type: metric_rename, service: checkout, occurred_at: "2026-02-10T00:00:00Z", old_value: checkout_requests_total, new_value: checkout_attempts_total}
+  - {id: chg-metric-2, type: metric_rename, service: stream-router, occurred_at: "2026-03-01T00:00:00Z", old_value: stream_consumer_lag, new_value: stream_partition_lag}
+  - {id: chg-conflict-1, type: authority_conflict, service: checkout, occurred_at: "2026-02-02T08:30:00Z", old_value: team-orchid, new_value: team-lumen}
+question_templates:
+  - {kind: owner_at_open, prompt: "Who owned {service} when {incident} opened?"}
+  - {kind: metric_at_open, prompt: "Which metric should be used for {service} during {incident}?"}
+  - {kind: mitigation_after_close, prompt: "Is the temporary mitigation from {incident} still current after closure?"}
+  - {kind: undocumented_objective, prompt: "What undocumented recovery objective applied to {incident}?"}

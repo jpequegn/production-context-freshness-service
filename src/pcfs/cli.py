@@ -3,6 +3,7 @@
 import typer
 
 from pcfs import __version__
+from pcfs.corpus import load_corpus, validate_corpus
 
 app = typer.Typer(no_args_is_help=True, help="Inspect temporal operational context.")
 data_app = typer.Typer(help="Initialize and ingest operational context data.")
@@ -20,10 +21,20 @@ def version() -> None:
     typer.echo(__version__)
 
 
-@data_app.command("help")
-def data_help() -> None:
-    """Describe the data workflow while it is being implemented."""
-    typer.echo("Data ingestion commands are introduced by repository issue #4.")
+@data_app.command("validate-corpus")
+def validate_corpus_command() -> None:
+    """Validate the packaged fictional operational corpus."""
+    corpus = load_corpus()
+    errors = validate_corpus(corpus)
+    if errors:
+        for error in errors:
+            typer.echo(f"ERROR: {error}")
+        raise typer.Exit(1)
+    typer.echo(
+        f"valid corpus {corpus.corpus_version}: "
+        f"{len(corpus.services)} services, {len(corpus.incidents)} incidents, "
+        f"{len(corpus.questions())} questions"
+    )
 
 
 @query_app.command("help")
