@@ -3,3 +3,5 @@ ts	phase	decision	why	evidence	result
 2026-10-22T07:56:36Z	baseline	Record frozen noneditable baseline	Editable package did not import under space-containing path	6542e0b0c7acdc4d3a1a9c7d1ac34039bd40b2d6	49 passed
 2026-10-22T07:56:36Z	design	Record sidecar choice with transactional ledger and outbox	Preserve policy ownership without event-sourcing rewrite	docs/subscriptions-design.md	chosen
 2026-10-22T07:56:36Z	workflow	Record captured tasks 17 through 24 and disabled Actions	User approved locally checked PR workflow	.github/workflows/ci.yml	local gates required
+2026-10-22T08:06:59Z	delivery	Merge contracts and fixtures	Sequence checked units before impact implementation	https://github.com/jpequegn/production-context-freshness-service/pull/26	Tasks17/18 merged;129tests
+2026-10-22T08:06:59Z	impact	Use pinned Rust graph as selection aid	Keep Python policy authoritative and truncation conservative	graph-adapter/README.md;tests/test_subscription_projection.py	174tests passed

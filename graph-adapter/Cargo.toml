@@ -1,0 +1,10 @@
+[package]
+name = "pcfs-graph-adapter"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+org_core = { package = "operational-reasoning-graph-lab", git = "https://github.com/jpequegn/operational-reasoning-graph-lab.git", rev = "9194281ab2a387e820f8047de512a3b8763cc7e0" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
