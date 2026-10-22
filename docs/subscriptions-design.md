@@ -95,11 +95,11 @@ rating the journal stronger on reconstruction. Adopted findings require per-depe
 policy decisions, filtered graph inputs, and atomic event/receipt/invalidation/outbox
 writes. Historical access grants must not authorize present disclosure.
 
-Source ingestion is a prerequisite, not an implicit part of accepting a subscription
-event. A failed event can be replayed against immutable ingested facts. Acceptance
-must commit its mandatory invalidations and receipt/outbox together. No accepted event
-may exist without those effects. Duplicate receipts are historical artifacts, not a
-fresh recomputation or authorization decision.
+Initial source ingestion precedes registration. During change processing the outer
+repository transaction owns source ingestion, mandatory invalidations, receipts and
+outbox together. Nested repository and sidecar operations join that transaction. A
+failure rolls back every effect and the exact event can be retried. Duplicate receipts
+are historical artifacts, not a fresh recomputation or authorization decision.
 
 The pinned graph library is `operational-reasoning-graph-lab` at
 `9194281ab2a387e820f8047de512a3b8763cc7e0`. Its fingerprint is a compatibility ID,
@@ -111,3 +111,11 @@ The packaged `deslop` and `babysit` commands are not available on this Codex run
 Perform their checks directly: inspect each diff for redundant layers/comments,
 run local tests, inspect PR reviews/conflicts and exact head, then merge. No skill file
 was modified and no claim is made that these unavailable commands ran.
+
+The integration review found ownership takeover, foreign assumption assessment,
+backdated disclosure, unavailable graph seeds treated as no impact, and ineffective
+future-dated invalidations. Regression tests cover the fixes. Current access checks
+inspect all retained restrictions for the relevant sources, independent of historical
+freshness time. Unavailable graph seeds cause conservative scoped review. A delivered
+episode remains one active request; later causes attach to it without another local
+delivery until disposition resolves it. This is not a notification-update service.

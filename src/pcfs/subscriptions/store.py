@@ -92,13 +92,8 @@ class SubscriptionStore:
 
     @contextmanager
     def _transaction(self) -> Iterator[None]:
-        self.connection.execute("BEGIN TRANSACTION")
-        try:
+        with self.repository.transaction():
             yield
-            self.connection.execute("COMMIT")
-        except Exception:
-            self.connection.execute("ROLLBACK")
-            raise
 
     def register(self, sub: Subscription) -> None:
         sub = Subscription.model_validate(sub.model_dump())
@@ -112,6 +107,19 @@ class SubscriptionStore:
                 if existing[0] != sub.key:
                     raise ValueError("immutable subscription revision collision")
                 return
+            prior = self.connection.execute(
+                "SELECT payload_json FROM subscription_revisions WHERE subscription_id = ? "
+                "ORDER BY revision DESC LIMIT 1",
+                [sub.subscription_id],
+            ).fetchone()
+            if prior:
+                previous = Subscription.model_validate_json(prior[0])
+                if (previous.reviewer, previous.conclusion_id) != (sub.reviewer, sub.conclusion_id):
+                    raise ValueError("subscription ownership and conclusion identity are immutable")
+                if sub.revision != previous.revision + 1:
+                    raise ValueError("new subscription revision must follow its predecessor")
+            elif sub.revision != 1:
+                raise ValueError("first subscription revision must be 1")
             for fact_id in sub.dependencies:
                 fact = self._fact(fact_id)
                 if fact.source.key != sub.source_versions[fact_id]:
@@ -256,6 +264,13 @@ class SubscriptionStore:
                 if receipt.created_at < event.available_at:
                     raise ValueError("receipt cannot precede event availability")
                 if receipt.guard.mandatory:
+                    direct_dependencies = {
+                        fact_id
+                        for fact_id in sub.dependencies
+                        if self._fact(fact_id).source.source_id == event.old.fact.source.source_id
+                    }
+                    if not direct_dependencies.issubset(receipt.guard.affected_fact_ids):
+                        raise ValueError("mandatory receipt must include every direct dependency")
                     mandatory.update(receipt.guard.affected_fact_ids)
                 if self.connection.execute(
                     "SELECT 1 FROM subscription_receipts WHERE receipt_id = ?",
@@ -280,6 +295,12 @@ class SubscriptionStore:
             if not mandatory.issubset({item.target_fact_id for item in records}):
                 raise ValueError("mandatory affected facts require atomic invalidations")
             for record in records:
+                if (
+                    not event.available_at
+                    <= record.occurred_at
+                    <= min(receipt.created_at for receipt in receipts)
+                ):
+                    raise ValueError("invalidation must be effective within event acceptance time")
                 self._insert_invalidation(event, record)
             if ordering == "ordered":
                 self.connection.execute(

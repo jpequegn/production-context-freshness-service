@@ -172,6 +172,20 @@ def test_cycles_and_bounds(rust_backend, hops, cap, expected, truncated):
     assert result.truncated is truncated
 
 
+def test_expired_seed_is_uncertain_impact_not_a_proven_empty_graph(rust_backend):
+    projection = manifest(facts=(fact("a", valid_to=NOW), fact("b")))
+    assert projection.projection.seeds == ()
+    assert projection.unavailable_seed_count == 1
+    result = select_impact(projection, graph_enabled=True, backend=rust_backend)
+    assert result.nodes == ()
+    assert result.truncated is True
+    assert select_impact(manifest(), graph_enabled=True, backend=rust_backend).nodes == (
+        "a",
+        "b",
+        "c",
+    )
+
+
 def test_multiple_seeds_share_global_cap_and_empty_seeds(rust_backend):
     projection = manifest(seeds=frozenset({"a", "c"}), bounds=TraversalBounds(max_nodes=2))
     result = select_impact(projection, graph_enabled=True, backend=rust_backend)

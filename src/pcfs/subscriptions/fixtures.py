@@ -174,6 +174,12 @@ def _snapshot(
     expires: bool = False,
     predicate: str | None = None,
 ) -> EvidenceSnapshot:
+    available_seconds = 0 if version == 1 else 60 + (version - 1) * 10
+    if sequence_id == "demo" and version > 1:
+        available_seconds = 30 if slot == "owner" else (version - 1) * 10
+    if sequence_id.startswith("late-event/") and version == 2:
+        available_seconds = 80
+    recorded_at = PINNED_TIME + timedelta(seconds=available_seconds)
     source = SourceVersion(
         source_id=f"synthetic/{sequence_id}/{slot}",
         version=f"v{version}",
@@ -183,7 +189,7 @@ def _snapshot(
         uri=f"synthetic://subscriptions/{sequence_id}/{slot}",
         content_digest=content_digest({"text": document}),
         observed_at=PINNED_TIME,
-        recorded_at=PINNED_TIME,
+        recorded_at=recorded_at,
     )
     return EvidenceSnapshot(
         document=document,
@@ -197,7 +203,7 @@ def _snapshot(
             observed_at=PINNED_TIME,
             valid_from=PINNED_TIME,
             valid_to=PINNED_TIME + timedelta(seconds=30) if expires else None,
-            recorded_at=PINNED_TIME,
+            recorded_at=recorded_at,
             authority=AuthorityLevel.AUTHORITATIVE,
             owner="synthetic-maintainers",
             review_state=ReviewState.REVIEWED,

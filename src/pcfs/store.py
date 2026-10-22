@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -34,6 +36,33 @@ class Repository:
     def __init__(self, path: str | Path = ":memory:") -> None:
         self.path = str(path)
         self.connection = duckdb.connect(self.path)
+        self._in_transaction = False
+        self._rollback_only = False
+
+    @contextmanager
+    def transaction(self) -> Iterator[None]:
+        """Let an outer operation commit related facts and sidecar effects together."""
+        if self._in_transaction:
+            try:
+                yield
+            except BaseException:
+                self._rollback_only = True
+                raise
+            return
+        self.connection.execute("BEGIN TRANSACTION")
+        self._in_transaction = True
+        self._rollback_only = False
+        try:
+            yield
+            if self._rollback_only:
+                raise RuntimeError("transaction cannot commit after a nested operation failed")
+            self.connection.execute("COMMIT")
+        except BaseException:
+            self.connection.execute("ROLLBACK")
+            raise
+        finally:
+            self._in_transaction = False
+            self._rollback_only = False
 
     def close(self) -> None:
         self.connection.close()
@@ -129,7 +158,9 @@ class Repository:
             )
         self._validate_bundle(bundle)
         event_types: list[str] = []
-        self.connection.execute("BEGIN TRANSACTION")
+        owns_transaction = not self._in_transaction
+        if owns_transaction:
+            self.connection.execute("BEGIN TRANSACTION")
         try:
             self.connection.execute(
                 "INSERT INTO source_versions VALUES (?, ?, ?, ?, ?, ?)",
@@ -169,9 +200,7 @@ class Repository:
                     ],
                 )
                 event_type = (
-                    "correction"
-                    if prior and prior[1] != canonical_json(fact.value)
-                    else "addition"
+                    "correction" if prior and prior[1] != canonical_json(fact.value) else "addition"
                 )
                 self._record_event(
                     bundle.source,
@@ -203,9 +232,13 @@ class Repository:
                     },
                 )
                 event_types.append(relationship.relationship_type.value)
-            self.connection.execute("COMMIT")
-        except Exception:
-            self.connection.execute("ROLLBACK")
+            if owns_transaction:
+                self.connection.execute("COMMIT")
+        except BaseException:
+            if owns_transaction:
+                self.connection.execute("ROLLBACK")
+            else:
+                self._rollback_only = True
             raise
         return IngestionResult(
             source_key=bundle.source.key,
@@ -253,7 +286,9 @@ class Repository:
     def record_invalidations(self, records: tuple[InvalidationRecord, ...]) -> int:
         self.initialize()
         inserted = 0
-        self.connection.execute("BEGIN TRANSACTION")
+        owns_transaction = not self._in_transaction
+        if owns_transaction:
+            self.connection.execute("BEGIN TRANSACTION")
         try:
             for record in records:
                 before = self.connection.execute(
@@ -274,9 +309,13 @@ class Repository:
                     ],
                 )
                 inserted += int(before == 0)
-            self.connection.execute("COMMIT")
-        except Exception:
-            self.connection.execute("ROLLBACK")
+            if owns_transaction:
+                self.connection.execute("COMMIT")
+        except BaseException:
+            if owns_transaction:
+                self.connection.execute("ROLLBACK")
+            else:
+                self._rollback_only = True
             raise
         return inserted
 

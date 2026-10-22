@@ -19,6 +19,7 @@ from pcfs.policy import PolicyRegistry
 from pcfs.propagation import ChangePropagator, render_impact_markdown
 from pcfs.retrieval import ContextQuery, ContextRetriever, QueryMode
 from pcfs.store import Repository
+from pcfs.subscriptions.cli import app as subscriptions_app
 
 app = typer.Typer(no_args_is_help=True, help="Inspect temporal operational context.")
 data_app = typer.Typer(help="Validate packaged operational context data.")
@@ -28,6 +29,7 @@ eval_app = typer.Typer(help="Run deterministic context evaluations.")
 app.add_typer(data_app, name="data")
 app.add_typer(query_app, name="query")
 app.add_typer(eval_app, name="eval")
+app.add_typer(subscriptions_app, name="subscriptions")
 
 
 @app.command()
