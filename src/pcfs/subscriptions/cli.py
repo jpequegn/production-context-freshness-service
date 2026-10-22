@@ -234,3 +234,31 @@ def review(
         typer.echo("review disposition recorded; source policy unchanged")
     except (ValueError, OSError, PermissionError) as error:
         raise typer.BadParameter(str(error)) from error
+
+
+@app.command("evaluate")
+def evaluate(
+    report_dir: Annotated[Path, typer.Option()],
+    graph_adapter: Annotated[Path | None, typer.Option()] = None,
+    adapter_sha256: Annotated[str | None, typer.Option()] = None,
+    interval_seconds: Annotated[int, typer.Option(min=1)] = 60,
+    horizon_seconds: Annotated[int, typer.Option(min=1)] = 300,
+) -> None:
+    """Compare matched synthetic refresh strategies without benefit claims."""
+    from pcfs.subscriptions.evaluation import (
+        evaluate_subscriptions,
+        render_evaluation_markdown,
+    )
+
+    try:
+        report = evaluate_subscriptions(
+            periodic_interval_seconds=interval_seconds,
+            observation_horizon_seconds=horizon_seconds,
+            graph_backend=_backend(graph_adapter, adapter_sha256),
+        )
+        report_dir.mkdir(parents=True, exist_ok=True)
+        (report_dir / "evaluation.json").write_text(canonical_json(report) + "\n")
+        (report_dir / "evaluation.md").write_text(render_evaluation_markdown(report))
+        typer.echo(str(report_dir / "evaluation.json"))
+    except (ValueError, OSError, PermissionError) as error:
+        raise typer.BadParameter(str(error)) from error
