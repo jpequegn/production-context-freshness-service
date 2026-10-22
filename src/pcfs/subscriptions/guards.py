@@ -113,7 +113,7 @@ def evaluate_guards(
         graph_fingerprint=content_digest(
             {
                 "projection": graph_fingerprint,
-                "policies": [policy.model_dump(mode="json") for policy in engine.registry.all()],
+                "policies": engine.registry.all(),
                 "evaluated_at": at,
                 "access": access,
             }

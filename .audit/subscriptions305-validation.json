@@ -1,0 +1,736 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "started_at": "2026-10-22T08:25:51.328317+00:00",
+  "source": {
+    "repo": "/Users/julienmika/Documents/New project/freshness305-docs",
+    "commit": "9892cd4db0ce4dc2d46fcabdf9cc069a7bdb6057",
+    "head_tree": "1f54daf0393cbf43cd0a4554ae5a2702ea68ccea",
+    "git_status": "",
+    "runtime_sha256": {
+      "src/pcfs/__init__.py": "12cd81d592e528b290a940b61327d87c2b23970f45f1035414a23ad881e8a92e",
+      "src/pcfs/cli.py": "693cd4e067f7537adf7675dca868c3a9956b02305fbf3d9b129fc506237de690",
+      "src/pcfs/corpus.py": "540d5d99448e2992a6600c76f1356e71525d044e426ab8d7b8421ae5af0347a4",
+      "src/pcfs/diagnostics.py": "4feb507955b3553206c569cee1f350a145366cacf8981674fc4a827cd25982be",
+      "src/pcfs/evaluation.py": "22a88f343ee2ebbc847a6af9d632cb19d2fea28161201771449e0619a659baa1",
+      "src/pcfs/fixtures/corpus.yaml": "9f19e2b45bf6d2f42a88502d55c7135d57c1ad920de9225cdd099653acf8b209",
+      "src/pcfs/identifiers.py": "72c8b2345fadf7b682322ee704422259dd513f84b4c1b2e1611ded2230192bf3",
+      "src/pcfs/ingestion.py": "2f3027e315aac7aee8eb2ee20a53aeb9df416a19ebd3bf3ab0a66a7772c5f0f6",
+      "src/pcfs/models.py": "57485ff2417b57480e444a1c78419cb28181a2e3991fae154994f2eaec159663",
+      "src/pcfs/policy.py": "8d124dd1d31def5910e332122455e800c48168254a634db1f634d64b5071abe0",
+      "src/pcfs/propagation.py": "c547c1d48813903ca66c497f371d14e19f39ca11d6b8d99cb29aac5d6f3ecbc6",
+      "src/pcfs/retrieval.py": "53f86975e0861ddab6062f6953d88e7f723b14d6b3bedcea212733784f3b9cd8",
+      "src/pcfs/store.py": "16986fcaf8eb6d54d4b48e255b998b20589d71c6adc6c418bc02b9981b648464",
+      "src/pcfs/subscriptions/__init__.py": "f273ddf0adaf25fcffae86d99cea5e0d8c44b5edb2343a9c2d94e16c90df0396",
+      "src/pcfs/subscriptions/advice.py": "6ab76021a1b1756434eac10a59579092cca0a200bda0ea7c17adce10c7348004",
+      "src/pcfs/subscriptions/cli.py": "9cd0243cb9782916761774cdb514a26040551fd8555155ae20f91dd81fec90e0",
+      "src/pcfs/subscriptions/evaluation.py": "d4350ff916268112ee97f3fae8d087f7d4a81b6cac2d69eb05d180f5c9f572a7",
+      "src/pcfs/subscriptions/fixtures.py": "a7f5a8dcac95e3699ce05db070ef7d1a70671165b7a810411b71db14e7016d01",
+      "src/pcfs/subscriptions/guards.py": "be04c33c085bd77af48233667d9db553f5cbd4d17cb73a334bf7a6dd239a500a",
+      "src/pcfs/subscriptions/models.py": "78ca64dfc12f738515cce939427c892e1d29354e30d3373eb665fb15866c42a3",
+      "src/pcfs/subscriptions/projection.py": "bad0c0ffe804d84304fea753dac29da5a6d8a2c7a66d3b9de0293810f86c7974",
+      "src/pcfs/subscriptions/service.py": "c46abaeafda417bacee30694720eecc9fa556ec2f5a68fc147642824fc4f97ed",
+      "src/pcfs/subscriptions/store.py": "c5d9af35d77e9aab41bc87eb5bfe96c8e5258002799d75b00de9c0e1af371459"
+    },
+    "input_sha256": {
+      "pyproject.toml": "b49419c6ec8fdb5535196e52d5ce3bb364006fa6e85cb48c76cc980ee560df68",
+      "uv.lock": "8b767661db734eb9a40d3e417c6f8bdffd4b5bcabedbd7e3207c076295c492c5",
+      "graph-adapter/Cargo.toml": "bc574c798530ab05649b101caa81d70dd8e882de0ae3624577c05f0edcdb38d5",
+      "graph-adapter/Cargo.lock": "fc9026f8d7c1d74a88ad99a2f6dd7cd7e3a700ad1da5a4478afa335a684f7e77",
+      "graph-adapter/src/main.rs": "92cce1c4bcf5e09337883421af23b3a21e9d78fde5c6fd18f5d6d3b048a7d153",
+      "scripts/prove-subscriptions.py": "da0f59e71ebb842512f7f18ba782010796103f2ca51a8e13974b389ee15904f5",
+      "scripts/verify-subscriptions-local.sh": "ab36b166df330118ec7b26c7bc1bd95c5af336a904e7df355f67b97e3e4d501c"
+    }
+  },
+  "offline": true,
+  "commands": [
+    {
+      "label": "uv-version",
+      "argv": [
+        "uv",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "logs/uv-version.log"
+    },
+    {
+      "label": "rust-version",
+      "argv": [
+        "rustc",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "logs/rust-version.log"
+    },
+    {
+      "label": "cargo-version",
+      "argv": [
+        "cargo",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "logs/cargo-version.log"
+    },
+    {
+      "label": "dev-sync",
+      "argv": [
+        "uv",
+        "sync",
+        "--frozen",
+        "--group",
+        "dev",
+        "--no-editable"
+      ],
+      "exit_code": 0,
+      "log": "logs/dev-sync.log"
+    },
+    {
+      "label": "ruff",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/dev/bin/ruff",
+        "check",
+        "src",
+        "tests",
+        "scripts"
+      ],
+      "exit_code": 0,
+      "log": "logs/ruff.log"
+    },
+    {
+      "label": "cargo-build",
+      "argv": [
+        "cargo",
+        "build",
+        "--locked",
+        "--manifest-path",
+        "graph-adapter/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "log": "logs/cargo-build.log"
+    },
+    {
+      "label": "cargo-test",
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--manifest-path",
+        "graph-adapter/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "log": "logs/cargo-test.log"
+    },
+    {
+      "label": "cargo-clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--manifest-path",
+        "graph-adapter/Cargo.toml",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "log": "logs/cargo-clippy.log"
+    },
+    {
+      "label": "pytest",
+      "argv": [
+        "env",
+        "PYTHONPATH=/Users/julienmika/Documents/New project/freshness305-docs/src",
+        "/private/tmp/subscriptions305-final-acceptance/dev/bin/python",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "--basetemp",
+        "/private/tmp/subscriptions305-final-acceptance/pytest-tmp",
+        "-q"
+      ],
+      "exit_code": 0,
+      "log": "logs/pytest.log"
+    },
+    {
+      "label": "wheel-build",
+      "argv": [
+        "uv",
+        "build",
+        "--wheel",
+        "--out-dir",
+        "/private/tmp/subscriptions305-final-acceptance/dist"
+      ],
+      "exit_code": 0,
+      "log": "logs/wheel-build.log"
+    },
+    {
+      "label": "prod-create",
+      "argv": [
+        "uv",
+        "venv",
+        "--python",
+        "/private/tmp/subscriptions305-final-acceptance/dev/bin/python",
+        "/private/tmp/subscriptions305-final-acceptance/prod"
+      ],
+      "exit_code": 0,
+      "log": "logs/prod-create.log"
+    },
+    {
+      "label": "prod-lock",
+      "argv": [
+        "uv",
+        "export",
+        "--frozen",
+        "--no-dev",
+        "--no-emit-project",
+        "--output-file",
+        "/private/tmp/subscriptions305-final-acceptance/runtime-requirements.txt"
+      ],
+      "exit_code": 0,
+      "log": "logs/prod-lock.log"
+    },
+    {
+      "label": "prod-dependencies",
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/python",
+        "--require-hashes",
+        "-r",
+        "/private/tmp/subscriptions305-final-acceptance/runtime-requirements.txt"
+      ],
+      "exit_code": 0,
+      "log": "logs/prod-dependencies.log"
+    },
+    {
+      "label": "prod-wheel",
+      "argv": [
+        "uv",
+        "pip",
+        "install",
+        "--python",
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/python",
+        "--no-deps",
+        "/private/tmp/subscriptions305-final-acceptance/dist/production_context_freshness_service-0.1.0-py3-none-any.whl"
+      ],
+      "exit_code": 0,
+      "log": "logs/prod-wheel.log"
+    },
+    {
+      "label": "original-demo",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "demo",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/original.duckdb",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/original-demo"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-original-demo.log"
+    },
+    {
+      "label": "subscription-demo",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "demo",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/flat"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-subscription-demo.log"
+    },
+    {
+      "label": "subscription-demo-rerun",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "demo",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/flat"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-subscription-demo-rerun.log"
+    },
+    {
+      "label": "denied-inspect",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "inspect",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "unauthorized-reviewer"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-denied-inspect.log"
+    },
+    {
+      "label": "dispatch",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "dispatch",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-dispatch.log"
+    },
+    {
+      "label": "dispatch-repeat",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "dispatch",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-dispatch-repeat.log"
+    },
+    {
+      "label": "stale-review",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "review",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer",
+        "--command-file",
+        "/private/tmp/subscriptions305-final-acceptance/stale-review.json"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-stale-review.log"
+    },
+    {
+      "label": "review",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "review",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer",
+        "--command-file",
+        "/private/tmp/subscriptions305-final-acceptance/review.json"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-review.log"
+    },
+    {
+      "label": "review-repeat",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "review",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer",
+        "--command-file",
+        "/private/tmp/subscriptions305-final-acceptance/review.json"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-review-repeat.log"
+    },
+    {
+      "label": "review-inspect",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "inspect",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-review-inspect.log"
+    },
+    {
+      "label": "wrong-review-command",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "review",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer",
+        "--command-file",
+        "/private/tmp/subscriptions305-final-acceptance/wrong-review.json"
+      ],
+      "exit_code": 2,
+      "log": "logs/cli-wrong-review-command.log"
+    },
+    {
+      "label": "review-command-collision",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "review",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/subscriptions.duckdb",
+        "--at",
+        "2026-06-01T12:05:30+00:00",
+        "--principal",
+        "synthetic-reviewer",
+        "--command-file",
+        "/private/tmp/subscriptions305-final-acceptance/collision-review.json"
+      ],
+      "exit_code": 2,
+      "log": "logs/cli-review-command-collision.log"
+    },
+    {
+      "label": "missing-cache",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "replay",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/missing.duckdb",
+        "--scenario-file",
+        "/private/tmp/subscriptions305-final-acceptance/scenario.json",
+        "--principal",
+        "synthetic-reviewer",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/missing-cache"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-missing-cache.log"
+    },
+    {
+      "label": "graph-demo",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "demo",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/graph.duckdb",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/graph",
+        "--graph-adapter",
+        "/Users/julienmika/Documents/New project/freshness305-docs/graph-adapter/target/debug/pcfs-graph-adapter",
+        "--adapter-sha256",
+        "de2c3d011f5129ec0e8d2c71368f3f8e3499223a8a867463aed95bf4d47b3494"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-graph-demo.log"
+    },
+    {
+      "label": "graph-pin-rejected",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "demo",
+        "--db",
+        "/private/tmp/subscriptions305-final-acceptance/bad-pin.duckdb",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/bad-pin",
+        "--graph-adapter",
+        "/Users/julienmika/Documents/New project/freshness305-docs/graph-adapter/target/debug/pcfs-graph-adapter",
+        "--adapter-sha256",
+        "0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "exit_code": 2,
+      "log": "logs/cli-graph-pin-rejected.log"
+    },
+    {
+      "label": "subscription-help",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-subscription-help.log"
+    },
+    {
+      "label": "subscription-evaluate",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "subscriptions",
+        "evaluate",
+        "--report-dir",
+        "/private/tmp/subscriptions305-final-acceptance/evaluation",
+        "--graph-adapter",
+        "/Users/julienmika/Documents/New project/freshness305-docs/graph-adapter/target/debug/pcfs-graph-adapter",
+        "--adapter-sha256",
+        "de2c3d011f5129ec0e8d2c71368f3f8e3499223a8a867463aed95bf4d47b3494"
+      ],
+      "exit_code": 0,
+      "log": "logs/cli-subscription-evaluate.log"
+    },
+    {
+      "label": "installed-proof",
+      "argv": [
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/python",
+        "-I",
+        "/Users/julienmika/Documents/New project/freshness305-docs/scripts/prove-subscriptions.py",
+        "prove",
+        "--repo",
+        "/Users/julienmika/Documents/New project/freshness305-docs",
+        "--output",
+        "/private/tmp/subscriptions305-final-acceptance",
+        "--cli",
+        "/private/tmp/subscriptions305-final-acceptance/prod/bin/pcfs",
+        "--adapter",
+        "/Users/julienmika/Documents/New project/freshness305-docs/graph-adapter/target/debug/pcfs-graph-adapter"
+      ],
+      "exit_code": 0,
+      "log": "logs/installed-proof.log"
+    }
+  ],
+  "checks": [
+    {
+      "name": "package loaded from clean production environment",
+      "passed": true
+    },
+    {
+      "name": "all installed runtime Python and corpus files match tracked source",
+      "passed": true
+    },
+    {
+      "name": "production environment excludes development tools",
+      "passed": true
+    },
+    {
+      "name": "original-demo",
+      "passed": true
+    },
+    {
+      "name": "original demo evaluation and dispute abstention",
+      "passed": true
+    },
+    {
+      "name": "subscription-demo",
+      "passed": true
+    },
+    {
+      "name": "demo has three unique receipts, one outbox, four deliveries",
+      "passed": true
+    },
+    {
+      "name": "subscription-demo-rerun",
+      "passed": true
+    },
+    {
+      "name": "demo rerun has no persisted effects and stable report identities",
+      "passed": true
+    },
+    {
+      "name": "denied-inspect",
+      "passed": true
+    },
+    {
+      "name": "denied principal sees no packets or outbox",
+      "passed": true
+    },
+    {
+      "name": "dispatch",
+      "passed": true
+    },
+    {
+      "name": "dispatch-repeat",
+      "passed": true
+    },
+    {
+      "name": "dispatch records exactly one delivery across repeats",
+      "passed": true
+    },
+    {
+      "name": "stale-review",
+      "passed": true
+    },
+    {
+      "name": "stale disposition is recorded without resolving later causes",
+      "passed": true
+    },
+    {
+      "name": "review",
+      "passed": true
+    },
+    {
+      "name": "review-repeat",
+      "passed": true
+    },
+    {
+      "name": "review-inspect",
+      "passed": true
+    },
+    {
+      "name": "latest-receipt disposition is idempotent and changes no fact state",
+      "passed": true
+    },
+    {
+      "name": "wrong-review-command",
+      "passed": true
+    },
+    {
+      "name": "rejected review changes no ledger state",
+      "passed": true
+    },
+    {
+      "name": "review-command-collision",
+      "passed": true
+    },
+    {
+      "name": "command collision changes no ledger state",
+      "passed": true
+    },
+    {
+      "name": "missing-cache",
+      "passed": true
+    },
+    {
+      "name": "missing cache requests review without current synthesis claims",
+      "passed": true
+    },
+    {
+      "name": "graph-demo",
+      "passed": true
+    },
+    {
+      "name": "pinned graph demo matches flat direct-dependency decisions",
+      "passed": true
+    },
+    {
+      "name": "graph execution pins a different impact fingerprint",
+      "passed": true
+    },
+    {
+      "name": "graph-pin-rejected",
+      "passed": true
+    },
+    {
+      "name": "subscription-help",
+      "passed": true
+    },
+    {
+      "name": "subscription-evaluate",
+      "passed": true
+    },
+    {
+      "name": "evaluation executes the pinned matched flat/graph case",
+      "passed": true
+    },
+    {
+      "name": "fixture truth covers every unique event/subscription pair",
+      "passed": true
+    },
+    {
+      "name": "deterministic_dependencies report truth coverage and unique scoring",
+      "passed": true
+    },
+    {
+      "name": "lexical_compare report truth coverage and unique scoring",
+      "passed": true
+    },
+    {
+      "name": "periodic_full_refresh report truth coverage and unique scoring",
+      "passed": true
+    },
+    {
+      "name": "semantic_subscription report truth coverage and unique scoring",
+      "passed": true
+    },
+    {
+      "name": "evaluation retains synthetic limits and both split reports",
+      "passed": true
+    }
+  ],
+  "installed_runtime": {
+    "package": "/private/tmp/subscriptions305-final-acceptance/prod/lib/python3.12/site-packages/pcfs",
+    "sha256": {
+      "src/pcfs/store.py": "16986fcaf8eb6d54d4b48e255b998b20589d71c6adc6c418bc02b9981b648464",
+      "src/pcfs/ingestion.py": "2f3027e315aac7aee8eb2ee20a53aeb9df416a19ebd3bf3ab0a66a7772c5f0f6",
+      "src/pcfs/models.py": "57485ff2417b57480e444a1c78419cb28181a2e3991fae154994f2eaec159663",
+      "src/pcfs/diagnostics.py": "4feb507955b3553206c569cee1f350a145366cacf8981674fc4a827cd25982be",
+      "src/pcfs/identifiers.py": "72c8b2345fadf7b682322ee704422259dd513f84b4c1b2e1611ded2230192bf3",
+      "src/pcfs/evaluation.py": "22a88f343ee2ebbc847a6af9d632cb19d2fea28161201771449e0619a659baa1",
+      "src/pcfs/policy.py": "8d124dd1d31def5910e332122455e800c48168254a634db1f634d64b5071abe0",
+      "src/pcfs/__init__.py": "12cd81d592e528b290a940b61327d87c2b23970f45f1035414a23ad881e8a92e",
+      "src/pcfs/cli.py": "693cd4e067f7537adf7675dca868c3a9956b02305fbf3d9b129fc506237de690",
+      "src/pcfs/propagation.py": "c547c1d48813903ca66c497f371d14e19f39ca11d6b8d99cb29aac5d6f3ecbc6",
+      "src/pcfs/retrieval.py": "53f86975e0861ddab6062f6953d88e7f723b14d6b3bedcea212733784f3b9cd8",
+      "src/pcfs/corpus.py": "540d5d99448e2992a6600c76f1356e71525d044e426ab8d7b8421ae5af0347a4",
+      "src/pcfs/subscriptions/store.py": "c5d9af35d77e9aab41bc87eb5bfe96c8e5258002799d75b00de9c0e1af371459",
+      "src/pcfs/subscriptions/service.py": "c46abaeafda417bacee30694720eecc9fa556ec2f5a68fc147642824fc4f97ed",
+      "src/pcfs/subscriptions/advice.py": "6ab76021a1b1756434eac10a59579092cca0a200bda0ea7c17adce10c7348004",
+      "src/pcfs/subscriptions/guards.py": "be04c33c085bd77af48233667d9db553f5cbd4d17cb73a334bf7a6dd239a500a",
+      "src/pcfs/subscriptions/models.py": "78ca64dfc12f738515cce939427c892e1d29354e30d3373eb665fb15866c42a3",
+      "src/pcfs/subscriptions/evaluation.py": "d4350ff916268112ee97f3fae8d087f7d4a81b6cac2d69eb05d180f5c9f572a7",
+      "src/pcfs/subscriptions/__init__.py": "f273ddf0adaf25fcffae86d99cea5e0d8c44b5edb2343a9c2d94e16c90df0396",
+      "src/pcfs/subscriptions/cli.py": "9cd0243cb9782916761774cdb514a26040551fd8555155ae20f91dd81fec90e0",
+      "src/pcfs/subscriptions/projection.py": "bad0c0ffe804d84304fea753dac29da5a6d8a2c7a66d3b9de0293810f86c7974",
+      "src/pcfs/subscriptions/fixtures.py": "a7f5a8dcac95e3699ce05db070ef7d1a70671165b7a810411b71db14e7016d01",
+      "src/pcfs/fixtures/corpus.yaml": "9f19e2b45bf6d2f42a88502d55c7135d57c1ad920de9225cdd099653acf8b209"
+    }
+  },
+  "production_distributions": {
+    "shellingham": "1.5.4",
+    "pydantic-core": "2.46.4",
+    "typer": "0.27.1",
+    "rich": "15.0.0",
+    "duckdb": "1.5.5",
+    "pygments": "2.20.0",
+    "mdurl": "0.1.2",
+    "pyyaml": "6.0.3",
+    "annotated-types": "0.8.0",
+    "markdown-it-py": "4.2.0",
+    "annotated-doc": "0.0.5",
+    "typing-inspection": "0.4.4",
+    "pydantic": "2.13.4",
+    "production-context-freshness-service": "0.1.0",
+    "typing-extensions": "4.16.0"
+  },
+  "graph_adapter": {
+    "path": "/Users/julienmika/Documents/New project/freshness305-docs/graph-adapter/target/debug/pcfs-graph-adapter",
+    "sha256": "de2c3d011f5129ec0e8d2c71368f3f8e3499223a8a867463aed95bf4d47b3494"
+  },
+  "evaluation": {
+    "status": "passed",
+    "truth_pairs": 63,
+    "flat_vs_graph": "compared"
+  },
+  "source_unchanged": true,
+  "exit_code": 0,
+  "finished_at": "2026-10-22T08:26:34.812224+00:00",
+  "artifact_sha256": {
+    "dist/production_context_freshness_service-0.1.0-py3-none-any.whl": "5abb90973017ec932334bcd82e7e44a83dad2de7022d16da3b140f2aa0a3cad1"
+  }
+}

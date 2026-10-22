@@ -10,20 +10,25 @@ from enum import Enum
 from typing import Any
 
 from pydantic import BaseModel
+from pydantic_core import to_jsonable_python
 
 
-def _json_value(value: Any) -> Any:
+def _json_value(value: Any, *, model_json: bool = False) -> Any:
     if isinstance(value, BaseModel):
-        return value.model_dump(mode="json", exclude_none=True)
+        return _json_value(value.model_dump(mode="python", exclude_none=True), model_json=True)
     if isinstance(value, datetime):
-        return value.isoformat()
+        return to_jsonable_python(value) if model_json else value.isoformat()
     if isinstance(value, Enum):
         return value.value
     if isinstance(value, Mapping):
-        return {str(key): _json_value(item) for key, item in value.items()}
+        return {str(key): _json_value(item, model_json=model_json) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
-        return [_json_value(item) for item in value]
-    return value
+        return [_json_value(item, model_json=model_json) for item in value]
+    if isinstance(value, (set, frozenset)):
+        return sorted(
+            (_json_value(item, model_json=model_json) for item in value), key=canonical_json
+        )
+    return to_jsonable_python(value)
 
 
 def canonical_json(value: Any) -> str:

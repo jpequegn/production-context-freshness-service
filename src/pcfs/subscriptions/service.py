@@ -258,9 +258,16 @@ class SubscriptionService:
         outbox = [
             item for item in self.store.list_outbox() if set(item["receipt_ids"]) <= visible_ids
         ]
+        visible_episodes = {item["episode_id"] for item in outbox}
+        history = [
+            item
+            for item in self.store.history()
+            if item.get("receipt_id") in visible_ids or item.get("episode_id") in visible_episodes
+        ]
         return {
             "packets": packets,
             "outbox": outbox,
+            "history": history,
             "access_basis": "caller_asserted_local_context_not_authenticated_identity",
         }
 

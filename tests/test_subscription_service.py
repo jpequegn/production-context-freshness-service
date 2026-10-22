@@ -89,6 +89,11 @@ def test_review_is_idempotent_stale_review_rejected_and_policy_never_restored():
         service.review(command, ACCESS, at)
         service.review(command, ACCESS, at)
         assert service.store.list_outbox()[0]["status"] == "resolved"
+        assert [row["type"] for row in service.inspect(ACCESS, at)["history"]] == [
+            "disposition",
+            "disposition",
+        ]
+        assert service.inspect(AccessContext(principal="someone-else"), at)["history"] == []
         assert repository.invalidated_fact_ids(at) == before
         assert len(before) == 2
 
