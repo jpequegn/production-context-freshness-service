@@ -82,6 +82,27 @@ the database does not exist.
 - [Architecture](docs/ARCHITECTURE.md)
 - [Usage patterns and extensions](docs/USAGE_AND_EXTENSIONS.md)
 
+## Evidence-change subscriptions
+
+The local subscription workflow pins conclusions to versioned evidence and records
+advisory review requests. The fixtures and cached advice are synthetic, not live Jev
+results. Review never restores invalidated evidence. There is no paid inference,
+external notification transport, or automatic conclusion update.
+
+```sh
+uv sync --frozen --group dev --no-editable
+uv run --no-sync pcfs subscriptions demo \
+	--db /tmp/pcfs-subscriptions.duckdb \
+	--report-dir /tmp/pcfs-subscriptions-report
+bash scripts/verify-subscriptions-local.sh /tmp/pcfs-subscriptions-verification-001
+```
+
+Use fresh paths. The verification output directory must not exist. The local gate
+checks source tests, the locked Rust adapter, and an installed production wheel.
+It preserves logs and `verification.json`, including unavailable evaluation commands.
+See [subscription usage and extensions](docs/SUBSCRIPTIONS_USAGE_AND_EXTENSIONS.md)
+for replay, access limits, local dispatch, review, graph mode, and evaluation limits.
+
 ## Development
 
 ```bash
