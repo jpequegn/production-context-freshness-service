@@ -169,8 +169,11 @@ def test_snapshots_pin_synthetic_provenance_text_envelopes_and_aware_times() -> 
                 fact.source.observed_at,
                 fact.source.recorded_at,
             ):
-                assert at == PINNED_TIME
+                assert at >= PINNED_TIME
                 assert at.utcoffset() == timedelta(0)
+            assert fact.source.recorded_at == fact.recorded_at
+            if fact.source.version != "v1":
+                assert fact.recorded_at > PINNED_TIME
         for subscription in scenario.subscriptions:
             originals = {item.fact.fact_id: item for item in scenario.facts}
             assert subscription.source_versions == {

@@ -61,7 +61,15 @@ def evaluate_guards(
         if not can_read(snapshot.fact, access):
             accessible = False
             reasons.append("access_denied")
-        if snapshot.fact.recorded_at > at or snapshot.fact.source.recorded_at > at:
+        if any(
+            value > at
+            for value in (
+                snapshot.fact.recorded_at,
+                snapshot.fact.observed_at,
+                snapshot.fact.source.recorded_at,
+                snapshot.fact.source.observed_at,
+            )
+        ):
             reasons.append("future_evidence")
     for dependency in subscription.dependencies:
         fact = facts.get(dependency)

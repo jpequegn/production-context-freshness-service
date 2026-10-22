@@ -427,7 +427,7 @@ def test_deadline_caps_debounce_and_mandatory_can_accelerate(setup_store):
     store.commit_event(
         second,
         (receipt(sub, second, mandatory=True, affected=(old.fact.fact_id,)),),
-        (invalidation(old),),
+        (invalidation(old, occurred_at=second.available_at),),
     )
     assert datetime.fromisoformat(store.list_outbox()[0]["due_at"]) == second.available_at
     assert len(store.dispatch(second.available_at)) == 1

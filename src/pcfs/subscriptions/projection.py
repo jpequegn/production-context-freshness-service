@@ -102,6 +102,7 @@ class GraphProjection(StrictModel):
 
 
 class ProjectionManifest(StrictModel):
+    unavailable_seed_count: int = Field(default=0, ge=0)
     schema_version: Literal[1] = 1
     upstream_revision: Literal[UPSTREAM_REVISION] = UPSTREAM_REVISION
     direction: Literal["prerequisite_to_dependent"] = "prerequisite_to_dependent"
@@ -234,6 +235,7 @@ def build_projection(
     if len(nodes) > 10_000 or len(edges) > 50_000 or len(selected_seeds) > bounds.max_nodes:
         raise ProjectionError("projection exceeds input or seed bounds")
     return ProjectionManifest(
+        unavailable_seed_count=len(seeds - eligible.keys()),
         service=service,
         environment=environment,
         incident=incident,
@@ -397,7 +399,7 @@ def select_impact(
         return ProjectionResult(
             backend="flat",
             nodes=manifest.projection.seeds,
-            truncated=False,
+            truncated=manifest.unavailable_seed_count > 0,
             manifest_sha256=manifest.sha256,
         )
     if backend is None:
@@ -406,7 +408,7 @@ def select_impact(
     return ProjectionResult(
         backend="rust_opgraph",
         nodes=output.nodes,
-        truncated=output.truncated,
+        truncated=output.truncated or manifest.unavailable_seed_count > 0,
         manifest_sha256=manifest.sha256,
         upstream_fingerprint=output.upstream_fingerprint,
     )
