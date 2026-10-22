@@ -1,0 +1,5 @@
+ts	phase	decision	why	evidence	result
+2026-10-22T07:56:36Z	baseline	Record clean-clone choice	Original checkout has unrelated duplicate files	production-context-freshness-service git status	untouched original
+2026-10-22T07:56:36Z	baseline	Record frozen noneditable baseline	Editable package did not import under space-containing path	6542e0b0c7acdc4d3a1a9c7d1ac34039bd40b2d6	49 passed
+2026-10-22T07:56:36Z	design	Record sidecar choice with transactional ledger and outbox	Preserve policy ownership without event-sourcing rewrite	docs/subscriptions-design.md	chosen
+2026-10-22T07:56:36Z	workflow	Record captured tasks 17 through 24 and disabled Actions	User approved locally checked PR workflow	.github/workflows/ci.yml	local gates required
